@@ -2,14 +2,14 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { popcorn, email, layers } from "lucide-react"; // ONLY use allowed icons
+import { Popcorn, Mail, Layers } from "lucide-react"; // Use correct PascalCase icon names
 import { Button } from "@/components/ui/button";
 
 const categories = [
   {
     id: "pops",
     title: "Pops",
-    icon: popcorn,
+    icon: Popcorn,
     description: "Gamified templates to boost engagement (Spin the Wheel, Trivia, Scratch Card, and more).",
     route: "/template-gallery/pops",
     image: "/lovable-uploads/01b275f3-962e-49f3-bc04-9696b715d718.png"
@@ -17,7 +17,7 @@ const categories = [
   {
     id: "emails",
     title: "Emails",
-    icon: email,
+    icon: Mail,
     description: "Beautiful, drag-and-drop editable email templates for your campaigns.",
     route: "/template-gallery/emails",
     image: undefined,
@@ -25,7 +25,7 @@ const categories = [
   {
     id: "landing-pages",
     title: "Landing Pages",
-    icon: layers,
+    icon: Layers,
     description: "Full-page campaign microsites & lead capture landing pages.",
     route: "/template-gallery/landing-pages",
     image: undefined,
@@ -60,7 +60,7 @@ export const TemplateCategorySelector = () => {
                 {image ? (
                   <img src={image} alt={title} className="w-16 h-16 rounded-lg shadow object-cover" />
                 ) : (
-                  <LucideIcon className={`w-14 h-14 mb-1 text-primary group-hover:text-accent transition`} />
+                  <LucideIcon className="w-14 h-14 mb-1 text-primary group-hover:text-accent transition" />
                 )}
               </div>
               <h2 className="text-xl font-bold mb-2 text-primary text-center">{title}</h2>
