@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -44,10 +45,44 @@ import {
 } from "lucide-react";
 
 interface TemplateGalleryProps {
-  onSelectTemplate: () => void;
+  // For router-based mount, props are not needed; but keep for legacy buttons
+  onSelectTemplate?: () => void;
 }
 
 export const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
+  const params = useParams();
+  const navigate = useNavigate();
+  // Router param category: pops, emails, landing-pages
+  const categoryParam = params.category;
+
+  // Map router param to template categories
+  const galleryCategory = useMemo(() => {
+    if (!categoryParam) return "all";
+    if (categoryParam === "pops") return "gamified";
+    if (categoryParam === "emails") return "newsletter";
+    if (categoryParam === "landing-pages") return "lead-gen";
+    // fallback
+    return "all";
+  }, [categoryParam]);
+
+  // If landed directly with no category, redirect to selector
+  useEffect(() => {
+    if (!categoryParam) {
+      navigate("/template-gallery", { replace: true });
+    }
+  }, [categoryParam, navigate]);
+
+  // Optionally, onSelectTemplate can be a prop or default
+  const handleTemplateClick = (template: any) => {
+    if (onSelectTemplate) {
+      onSelectTemplate();
+    }
+    // Store selected template and category for contextual usage (enhancement/for editor)
+    // You can extend this logic (e.g. to localStorage/context) as needed.
+    sessionStorage.setItem("selectedTemplateCategory", galleryCategory);
+    sessionStorage.setItem("selectedTemplateId", template?.id || "");
+  };
+
   const [selectedCategory, setSelectedCategory] = useState("gamified");
   const [searchTerm, setSearchTerm] = useState("");
   const [userLevel] = useState(5);
@@ -516,10 +551,14 @@ export const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  // Update filtering to ONLY show correct category based on param and any search
   const filteredTemplates = templates.filter(template => {
-    const matchesCategory = selectedCategory === "all" || template.category === selectedCategory;
-    const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      galleryCategory === "all" ||
+      template.category === galleryCategory;
+    const matchesSearch =
+      template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      template.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -586,6 +625,19 @@ export const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
 
   return (
     <div className="p-6 bg-background min-h-screen">
+      {/* Header with Back Button */}
+      <div className="flex items-center mb-6">
+        <button
+          onClick={() => navigate("/template-gallery")}
+          className="mr-4 rounded-lg flex items-center text-primary hover:bg-primary/10 px-2 py-1 font-medium"
+        >← Back</button>
+        <h1 className="text-2xl font-bold text-foreground">
+          {categoryParam === "pops" && <>Pops Gallery</>}
+          {categoryParam === "emails" && <>Email Templates Gallery</>}
+          {categoryParam === "landing-pages" && <>Landing Pages Gallery</>}
+        </h1>
+      </div>
+      
       {/* Header with Gamification */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
@@ -749,7 +801,7 @@ export const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
                             <Button
                               size="sm"
                               className="bg-white text-slate-900 hover:bg-slate-100"
-                              onClick={onSelectTemplate}
+                              onClick={() => handleTemplateClick(template)}
                               disabled={isLocked}
                             >
                               <Eye className="w-4 h-4 mr-2" />
@@ -838,7 +890,7 @@ export const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
                           
                           <Button 
                             className={`flex-1 ml-3 ${isGameTemplate && !isLocked ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700' : ''}`}
-                            onClick={onSelectTemplate}
+                            onClick={() => handleTemplateClick(template)}
                             disabled={isLocked}
                           >
                             {isLocked ? (
@@ -895,3 +947,5 @@ export const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
     </div>
   );
 };
+
+export default TemplateGallery;

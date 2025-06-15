@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -9,6 +8,8 @@ import { Login } from "@/components/Login";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { TemplateGallery } from "@/components/TemplateGallery";
+import TemplateCategorySelector from "@/pages/TemplateCategorySelector";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,9 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index username={username} onLogout={handleLogout} />} />
+              {/* Template selection and category-based galleries */}
+              <Route path="/template-gallery" element={<TemplateCategorySelector />} />
+              <Route path="/template-gallery/:category" element={<TemplateGallery />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

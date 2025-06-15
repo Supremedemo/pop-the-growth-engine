@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Zap, Lightbulb, Shield, LogOut, User, Moon, Sun, Menu, BarChart3, Target, TrendingUp } from "lucide-react";
@@ -17,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LandingPageBuilder } from "@/components/LandingPageBuilder";
+import { useNavigate } from "react-router-dom";
 
 interface IndexProps {
   username: string;
@@ -26,6 +26,7 @@ interface IndexProps {
 const Index = ({ username, onLogout }: IndexProps) => {
   const [activeView, setActiveView] = useState("dashboard");
   const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   const renderActiveView = () => {
     switch (activeView) {
@@ -38,7 +39,8 @@ const Index = ({ username, onLogout }: IndexProps) => {
       case "ai-builder":
         return <AiLandingPageBuilder onBack={() => setActiveView("dashboard")} />;
       case "templates":
-        return <TemplateGallery onSelectTemplate={() => setActiveView("builder")} />;
+        navigate("/template-gallery");
+        return null;
       case "campaigns":
         return <CampaignManager />;
       case "analytics":
